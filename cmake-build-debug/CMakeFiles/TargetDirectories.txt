@@ -1,0 +1,3 @@
+C:/Users/wikto/CLionProjects/BugLife/cmake-build-debug/CMakeFiles/BugLife.dir
+C:/Users/wikto/CLionProjects/BugLife/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/wikto/CLionProjects/BugLife/cmake-build-debug/CMakeFiles/rebuild_cache.dir
