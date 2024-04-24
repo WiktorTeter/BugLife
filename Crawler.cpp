@@ -31,6 +31,5 @@ void Crawler::move() {
             break;
     }
 
-    // Record crawler's path history
-    path.push_back(position);
+
 }

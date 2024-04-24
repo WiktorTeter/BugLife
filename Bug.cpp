@@ -5,11 +5,6 @@
 #include "Bug.h"
 int BOARD_WIDTH = 10;
 int BOARD_HEIGHT = 10;
-Bug::Bug(int id, int x, int y, Direction dir, int size)
-        : id(id), position(x, y), direction(dir), size(size), alive(true) {
-    // Initial position is added to the path
-    path.push_back(position);
-}
 
 bool Bug::isWayBlocked() const {
     switch (direction) {

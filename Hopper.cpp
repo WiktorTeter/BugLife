@@ -48,6 +48,5 @@ void Hopper::move() {
         }
     }
 
-    // Record the new position in the hopper's path history
-    path.push_back(position);
+
 }
