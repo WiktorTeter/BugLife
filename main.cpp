@@ -79,7 +79,16 @@ int main() {
     if (!found) {
         std::cout << "Bug " << bugID << " not found." << std::endl;
     }
+    // Move all bugs
+    std::cout << "Tapping the Bug Board..." << std::endl;
+    for (Bug* bug : bug_vector) {
+        bug->move();  // Call the move method for each bug
+    }
 
+    // Display bugs after movement
+    for (const Bug* bug : bug_vector) {
+        std::cout << "Bug ID: " << bug->getId() << " at Position: (" << bug->getX() << "," << bug->getY() << ")" << std::endl;
+    }
 
 
     // Don't forget to free memory for dynamically allocated objects
