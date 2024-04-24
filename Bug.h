@@ -16,11 +16,11 @@ enum class Direction {
 class Bug {
 protected:
     int id;
-    std::pair<int, int > position;  // Using std::pair to store position as (x, y)
+    std::pair<int, int > position;
     Direction direction;
     int size;
     bool alive;
-    std::list<std::pair<int, int>> path; // To store movement history
+    std::list<std::pair<int, int>> path;
 
 
 public:
@@ -44,13 +44,13 @@ public:
     void setSize(int size) { this->size = size; }
     void setAlive(bool alive) { this->alive = alive; }
 
-    // Pure virtual move function
+
     virtual void move() = 0;
     bool isWayBlocked() const;
     void addToPath() {
-        path.push_back(position); // Add the current position to the path
+        path.push_back(position);
     }
-    // Add a function to get the path for display
+
     const std::list<std::pair<int, int>>& getPath() const {
         return path;
     }

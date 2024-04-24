@@ -8,9 +8,8 @@
 //crawler.h
 class Crawler : public Bug {
 public:
-    using Bug::Bug; // Inherit Bug's constructor
+    using Bug::Bug;
     void move() override;
-    // ... other member functions specific to Crawler
 };
 
 #endif // CRAWLER_H

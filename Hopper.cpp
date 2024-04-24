@@ -41,12 +41,10 @@ void Hopper::move() {
             }
             isMoved = true;
         } else {
-            // If the hopper is at the edge and can't hop in the current direction,
-            // set a new direction at random and loop again to try to move
             direction = static_cast<Direction>((std::rand() % 4) + 1);
         }
-        addToPath();
-    }
 
+    }
+    addToPath();
 
 }

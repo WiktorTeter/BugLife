@@ -14,7 +14,6 @@ private:
 public:
     Hopper(int id, int x, int y, Direction dir, int size, int hopLength);
     void move() override;
-    // ... other member functions specific to Hopper
     int getHopLength() const { return hopLength; }
 };
 
