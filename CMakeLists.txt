@@ -3,4 +3,9 @@ project(BugLife)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(BugLife main.cpp)
+add_executable(BugLife main.cpp Bug.cpp Crawler.cpp Hopper.cpp
+        Bug.cpp
+        Crawler.cpp
+        Crawler.h
+        Hopper.h
+        Hopper.cpp)
