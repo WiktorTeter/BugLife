@@ -21,4 +21,4 @@ bool Bug::isWayBlocked() const {
     }
 }
 
-// Other member functions' definitions
+

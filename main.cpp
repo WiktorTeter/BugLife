@@ -16,6 +16,30 @@ std::string directionToString(Direction dir) {
         default: return "Unknown";
     }
 }
+
+void displayBugs(const std::vector<Bug*>& bug_vector){
+    std::cout << "Bugs:" << std::endl;
+    for (const Bug* bug : bug_vector) {
+        std::cout << " " << bug->getId() << " " <<(dynamic_cast<const Crawler*>(bug) ? "Crawler" : "Hopper")
+                  << " (" << bug->getX() << "," << bug->getY() << ") " << bug->getSize()
+                  << " " << directionToString(bug->getDirection())
+                  << " " << (bug->isAlive() ? "Alive" : "Dead");
+        if (auto* hopper = dynamic_cast<const Hopper*>(bug)) {
+            std::cout << " "<<hopper->getHopLength();
+        }
+        std::cout << std::endl;
+    }
+}
+
+void displayLifeHistory(const std::vector<Bug*>& bug_vector) {
+    for (const Bug* bug : bug_vector) {
+        std::cout << "Bug ID: " << bug->getId() << " Path: ";
+        for (const auto& pos : bug->getPath()) {
+            std::cout << "(" << pos.first << "," << pos.second << "), ";
+        }
+        std::cout << (bug->isAlive() ? "Alive!" : "Dead!") << std::endl;
+    }
+}
 int main() {
     std::ifstream inFile("C:\\Users\\wikto\\CLionProjects\\BugLife\\bugs.txt");
     if (!inFile) {
@@ -44,18 +68,8 @@ int main() {
     }
     inFile.close();
 
-    // Display bugs
-    std::cout << "Bugs:" << std::endl;
-    for (const Bug* bug : bug_vector) {
-        std::cout << " " << bug->getId() << " " <<(dynamic_cast<const Crawler*>(bug) ? "Crawler" : "Hopper")
-                  << " (" << bug->getX() << "," << bug->getY() << ") " << bug->getSize()
-                  << " " << directionToString(bug->getDirection())
-                  << " " << (bug->isAlive() ? "Alive" : "Dead");
-        if (auto* hopper = dynamic_cast<const Hopper*>(bug)) {
-            std::cout << " "<<hopper->getHopLength();
-        }
-        std::cout << std::endl;
-    }
+
+    displayBugs(bug_vector);
     int bugID;
     std::cout << "Enter bug ID: ";
     std::cin >> bugID;
@@ -79,16 +93,20 @@ int main() {
     if (!found) {
         std::cout << "Bug " << bugID << " not found." << std::endl;
     }
+    for (int i = 0; i < 2; ++i) {
+
 
     std::cout << "Tapping the Bug Board..." << std::endl;
     for (Bug* bug : bug_vector) {
         bug->move();
     }
-
-
-    for (const Bug* bug : bug_vector) {
-        std::cout << "Bug ID: " << bug->getId() << " at Position: (" << bug->getX() << "," << bug->getY() << ")" << std::endl;
-    }
+}
+//    for (int i = 0; i < 10; ++i) {
+//    for (const Bug* bug : bug_vector) {
+//        std::cout << "Bug ID: " << bug->getId() << " at Position: (" << bug->getX() << "," << bug->getY() << ")" << (bug->isAlive() ? "Alive" : "Dead") << std::endl;
+//    }
+//}
+    displayLifeHistory(bug_vector);
 
 
     // Don't forget to free memory for dynamically allocated objects
@@ -98,3 +116,4 @@ int main() {
 
     return 0;
 }
+

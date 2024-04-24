@@ -4,6 +4,7 @@
 
 #include <utility>  // For std::pair
 #include <string>
+#include <list>
 
 enum class Direction {
     North = 1,
@@ -15,14 +16,16 @@ enum class Direction {
 class Bug {
 protected:
     int id;
-    std::pair<int, int> position;  // Using std::pair to store position as (x, y)
+    std::pair<int, int > position;  // Using std::pair to store position as (x, y)
     Direction direction;
     int size;
     bool alive;
+    std::list<std::pair<int, int>> path; // To store movement history
+
 
 public:
     Bug(int id, int x, int y, Direction direction, int size) :
-            id(id), position(x, y), direction(direction), size(size), alive(true) {}
+            id(id), position(x, y), direction(direction), size(size), alive(true) {path.push_back({x, y});}
 
     virtual ~Bug() {}
 
@@ -44,6 +47,13 @@ public:
     // Pure virtual move function
     virtual void move() = 0;
     bool isWayBlocked() const;
+    void addToPath() {
+        path.push_back(position); // Add the current position to the path
+    }
+    // Add a function to get the path for display
+    const std::list<std::pair<int, int>>& getPath() const {
+        return path;
+    }
 };
 
 #endif // BUG_H

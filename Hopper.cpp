@@ -8,7 +8,7 @@
 //hopper.cpp
 Hopper::Hopper(int id, int x, int y, Direction dir, int size, int hopLength)
         : Bug(id, x, y, dir, size), hopLength(hopLength) {
-    // Constructor specific to Hopper
+
 }
 
 
@@ -21,7 +21,6 @@ void Hopper::move() {
     }
     int BOARD_WIDTH = 10;
     int BOARD_HEIGHT = 10;
-    int boardSize = BOARD_HEIGHT*BOARD_WIDTH;
     bool isMoved = false;
     while (!isMoved) {
         if (!isWayBlocked()) {
@@ -31,10 +30,10 @@ void Hopper::move() {
                     position.second = std::max(0, position.second - hopLength);
                     break;
                 case Direction::East:
-                    position.first = std::min(boardSize - 1, position.first + hopLength);
+                    position.first = std::min(BOARD_WIDTH - 1, position.first + hopLength);
                     break;
                 case Direction::South:
-                    position.second = std::min(boardSize - 1, position.second + hopLength);
+                    position.second = std::min(BOARD_HEIGHT - 1, position.second + hopLength);
                     break;
                 case Direction::West:
                     position.first = std::max(0, position.first - hopLength);
@@ -46,6 +45,7 @@ void Hopper::move() {
             // set a new direction at random and loop again to try to move
             direction = static_cast<Direction>((std::rand() % 4) + 1);
         }
+        addToPath();
     }
 
 
