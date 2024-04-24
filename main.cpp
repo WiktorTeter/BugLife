@@ -42,9 +42,8 @@ int main() {
             bug_vector.push_back(new Hopper(id, x, y, static_cast<Direction>(dir), size, hopLength));
         }
     }
+    inFile.close();
 
-    // Display the number of bugs read
-    std::cout << "Number of bugs read: " << bug_vector.size() << std::endl;
     // Display bugs
     std::cout << "Bugs:" << std::endl;
     for (const Bug* bug : bug_vector) {
@@ -57,6 +56,31 @@ int main() {
         }
         std::cout << std::endl;
     }
+    int bugID;
+    std::cout << "Enter bug ID: ";
+    std::cin >> bugID;
+    bool found = false;
+
+    for (const Bug* bug : bug_vector) {
+        if (bug->getId() == bugID) {
+            std::cout << "Bug Found: " << bug->getId() << " " <<(dynamic_cast<const Crawler*>(bug) ? "Crawler" : "Hopper")
+                      << " (" << bug->getX() << "," << bug->getY() << ") " << bug->getSize()
+                      << " " << directionToString(bug->getDirection())
+                      << " " << (bug->isAlive() ? "Alive" : "Dead");
+            if (const auto* hopper = dynamic_cast<const Hopper*>(bug)) {
+                std::cout << " " << hopper->getHopLength();
+            }
+            std::cout << std::endl;
+            found = true;
+            break;
+        }
+    }
+
+    if (!found) {
+        std::cout << "Bug " << bugID << " not found." << std::endl;
+    }
+
+
 
     // Don't forget to free memory for dynamically allocated objects
     for (auto bug : bug_vector) {
