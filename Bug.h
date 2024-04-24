@@ -31,6 +31,7 @@ public:
     virtual void move() = 0;
     bool isWayBlocked() const;
     // ... other member functions as needed
+
 };
 
 #endif // BUG_H

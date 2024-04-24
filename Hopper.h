@@ -6,7 +6,7 @@
 #define HOPPER_H
 
 #include "Bug.h"
-
+//hopper.h
 class Hopper : public Bug {
 private:
     int hopLength;

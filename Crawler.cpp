@@ -1,13 +1,36 @@
-//
-// Created by wikto on 23/04/2024.
-//
-
 #include "Crawler.h"
-#include <cstdlib> // For random direction
+#include <cstdlib> // For std::rand() and std::srand()
+#include <ctime>   // For std::time()
 
 void Crawler::move() {
-    // Implement Crawler-specific move logic
-    // ...
-}
+    // Seed random generator - only once at the start of the program (or game)
+    static bool seeded = false;
+    if (!seeded) {
+        std::srand(static_cast<unsigned int>(std::time(nullptr)));
+        seeded = true;
+    }
 
-// Other member functions' definitions specific to Crawler
+    // Check if the crawler's way is blocked and set a new random direction if it is
+    while (isWayBlocked()) {
+        direction = static_cast<Direction>((std::rand() % 4) + 1);
+    }
+
+    // Move one unit in the current direction
+    switch (direction) {
+        case Direction::North:
+            position.second -= 1;
+            break;
+        case Direction::East:
+            position.first += 1;
+            break;
+        case Direction::South:
+            position.second += 1;
+            break;
+        case Direction::West:
+            position.first -= 1;
+            break;
+    }
+
+    // Record crawler's path history
+    path.push_back(position);
+}
