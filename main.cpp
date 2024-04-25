@@ -6,6 +6,8 @@
 #include "Bug.h"
 #include "Crawler.h"
 #include "Hopper.h"
+#include <random>
+#include <ctime>
 const int BOARD_SIZE = 10;
 void displayAllCells(const std::vector<std::vector<std::vector<Bug*>>>& board) {
     for (int x = 0; x < BOARD_SIZE; ++x) {
@@ -52,6 +54,58 @@ std::string directionToString(Direction dir) {
     }
 }
 
+void BugEating(std::vector<std::vector<std::vector<Bug*>>>& board) {
+    std::srand(std::time(nullptr));  // Seed for random number generation
+
+    for (int x = 0; x < BOARD_SIZE; ++x) {
+        for (int y = 0; y < BOARD_SIZE; ++y) {
+            auto& cell = board[x][y];
+            if (cell.size() > 1) {
+                Bug* largestBug = nullptr;
+                int maxSize = 0;
+                std::vector<Bug*> largestBugs;
+
+                // Determine the largest bug(s)
+                for (Bug* bug : cell) {
+                    if (bug->isAlive()) {
+                        if (bug->getSize() > maxSize) {
+                            largestBugs.clear();
+                            maxSize = bug->getSize();
+                            largestBugs.push_back(bug);
+                        } else if (bug->getSize() == maxSize) {
+                            largestBugs.push_back(bug);
+                        }
+                    }
+                }
+
+                if (largestBugs.size() == 1) {
+                    largestBug = largestBugs.front();
+                } else if (largestBugs.size() > 1) {
+                    // Resolve ties randomly
+                    largestBug = largestBugs[std::rand() % largestBugs.size()];
+                }
+
+                // Process eating
+                if (largestBug) {
+                    for (Bug* bug : cell) {
+                        if (bug != largestBug && bug->isAlive()) {
+                            largestBug->setSize(largestBug->getSize() + bug->getSize());
+                            bug->setAlive(false);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+void tapBoard(std::vector<Bug*>& bug_vector, std::vector<std::vector<std::vector<Bug*>>>& board) {
+    for (Bug* bug : bug_vector) {
+        bug->move();
+    }
+    updateBoard(board, bug_vector);  // Make sure to call this to refresh the board
+    BugEating(board);         // Resolve any conflicts after movement
+
+}
 void displayBugs(const std::vector<Bug*>& bug_vector){
     std::cout << "Bugs:" << std::endl;
     for (const Bug* bug : bug_vector) {
@@ -122,7 +176,6 @@ int main() {
     inFile.close();
     std::vector<std::vector<std::vector<Bug*>>> board(BOARD_SIZE, std::vector<std::vector<Bug*>>(BOARD_SIZE));
 
-    // Populate the board with bugs
     for (auto bug : bug_vector) {
         int x = bug->getX();
         int y = bug->getY();
@@ -175,10 +228,7 @@ int main() {
                 break;
             case 3:
                 std::cout << "Tapping the Bug Board...\n";
-                for (Bug* bug : bug_vector) {
-                    bug->move();
-                }
-                updateBoard(board, bug_vector);
+                tapBoard(bug_vector, board);
                 break;
             case 4:
                 displayLifeHistory(bug_vector);
@@ -195,7 +245,7 @@ int main() {
         }
     } while (choice != 5);
 
-    // Don't forget to free memory for dynamically allocated objects
+
     for (auto bug : bug_vector) {
         delete bug;
     }
