@@ -6,7 +6,42 @@
 #include "Bug.h"
 #include "Crawler.h"
 #include "Hopper.h"
-// Function to convert Direction enum value to string
+const int BOARD_SIZE = 10;
+void displayAllCells(const std::vector<std::vector<std::vector<Bug*>>>& board) {
+    for (int x = 0; x < BOARD_SIZE; ++x) {
+        for (int y = 0; y < BOARD_SIZE; ++y) {
+            std::cout << "(" << x << "," << y << "): ";
+            if (board[x][y].empty()) {
+                std::cout << "empty";
+            } else {
+                for (size_t i = 0; i < board[x][y].size(); ++i) {
+                    if (i > 0) std::cout << ", ";
+                    std::cout << (dynamic_cast<Crawler*>(board[x][y][i]) ? "Crawler " : "Hopper ")
+                              << board[x][y][i]->getId();
+                }
+            }
+            std::cout << std::endl;
+        }
+    }
+}
+void clearBoard(std::vector<std::vector<std::vector<Bug*>>>& board) {
+    for (int x = 0; x < BOARD_SIZE; ++x) {
+        for (int y = 0; y < BOARD_SIZE; ++y) {
+            board[x][y].clear();
+        }
+    }
+}
+void updateBoard(std::vector<std::vector<std::vector<Bug*>>>& board, const std::vector<Bug*>& bug_vector) {
+    clearBoard(board);
+    for (auto bug : bug_vector) {
+        int x = bug->getX();
+        int y = bug->getY();
+        if (x >= 0 && x < BOARD_SIZE && y >= 0 && y < BOARD_SIZE) {
+            board[x][y].push_back(bug);
+        }
+    }
+}
+
 std::string directionToString(Direction dir) {
     switch (dir) {
         case Direction::North: return "North";
@@ -40,25 +75,43 @@ void displayLifeHistory(const std::vector<Bug*>& bug_vector) {
         std::cout << (bug->isAlive() ? "Alive!" : "Dead!") << std::endl;
     }
 }
+
+void writeLifeHistoryToFile(const std::vector<Bug*>& bug_vector) {
+    std::ofstream outFile("C:\\Users\\wikto\\CLionProjects\\BugLife\\bugs_life_history_date_time.out");
+    if (!outFile) {
+        std::cerr << "Failed to open file for writing.\n";
+        return;
+    }
+
+    for (const Bug* bug : bug_vector) {
+        outFile << "Bug ID: " << bug->getId() << " Path: ";
+        for (const auto& pos : bug->getPath()) {
+            outFile << "(" << pos.first << "," << pos.second << "), ";
+        }
+        outFile << (bug->isAlive() ? "Alive!" : "Dead!") << std::endl;
+    }
+
+    outFile.close();
+    std::cout << "Life history written to 'bugs_life_history.out'\n";
+}
 int main() {
     std::ifstream inFile("C:\\Users\\wikto\\CLionProjects\\BugLife\\bugs.txt");
     if (!inFile) {
         std::cerr << "Unable to open file bugs.txt";
-        return 1; // Exit if the file cannot be opened
+        return 1;
     }
 
-    std::vector<Bug*> bug_vector; // Vector to store pointers to Bug objects
+    std::vector<Bug*> bug_vector;
     std::string line;
     while (std::getline(inFile, line)) {
         std::istringstream iss(line);
         char type;
-        int id, x, y, dir, size, hopLength = 0; // Initialize hopLength to 0
+        int id, x, y, dir, size, hopLength = 0;
         char delimiter;
 
-        // Parse the line
         iss >> type >> delimiter >> id >> delimiter >> x >> delimiter >> y >> delimiter >> dir >> delimiter >> size;
 
-        // Create Bug object based on type
+
         if (type == 'C') {
             bug_vector.push_back(new Crawler(id, x, y, static_cast<Direction>(dir), size));
         } else if (type == 'H') {
@@ -67,8 +120,17 @@ int main() {
         }
     }
     inFile.close();
+    std::vector<std::vector<std::vector<Bug*>>> board(BOARD_SIZE, std::vector<std::vector<Bug*>>(BOARD_SIZE));
 
-
+    // Populate the board with bugs
+    for (auto bug : bug_vector) {
+        int x = bug->getX();
+        int y = bug->getY();
+        if (x < BOARD_SIZE && y < BOARD_SIZE) {
+            board[x][y].push_back(bug);
+        }
+    }
+    updateBoard(board, bug_vector);
     int choice;
     do {
         std::cout << "\n--- Bug Management Menu ---\n";
@@ -76,7 +138,8 @@ int main() {
         std::cout << "2. Display Bug by ID\n";
         std::cout << "3. Tap the Bug Board\n";
         std::cout << "4. Show Bug Paths\n";
-        std::cout << "5. Exit\n";
+        std::cout << "5. Exit and write bugs path to file\n";
+        std::cout << "6. Display All Cells\n";
         std::cout << "Enter your choice: ";
         std::cin >> choice;
 
@@ -115,12 +178,17 @@ int main() {
                 for (Bug* bug : bug_vector) {
                     bug->move();
                 }
+                updateBoard(board, bug_vector);
                 break;
             case 4:
                 displayLifeHistory(bug_vector);
                 break;
             case 5:
+                writeLifeHistoryToFile(bug_vector);
                 std::cout << "Exiting the program.\n";
+                break;
+            case 6:
+                displayAllCells(board);
                 break;
             default:
                 std::cout << "Invalid choice. Please try again.\n";
