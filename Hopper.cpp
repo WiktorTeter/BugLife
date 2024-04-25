@@ -3,8 +3,8 @@
 //
 
 #include "Hopper.h"
-#include <cstdlib> // For std::rand() and std::srand()
-#include <ctime>   // For std::time()
+#include <cstdlib>
+#include <ctime>
 //hopper.cpp
 Hopper::Hopper(int id, int x, int y, Direction dir, int size, int hopLength)
         : Bug(id, x, y, dir, size), hopLength(hopLength) {
@@ -24,7 +24,6 @@ void Hopper::move() {
     bool isMoved = false;
     while (!isMoved) {
         if (!isWayBlocked()) {
-            // If the way is not blocked, move hopLength units in the current direction
             switch (direction) {
                 case Direction::North:
                     position.second = std::max(0, position.second - hopLength);

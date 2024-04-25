@@ -73,6 +73,12 @@ build CMakeFiles/BugLife.dir/Hopper.cpp.obj: CXX_COMPILER__BugLife_unscanned_Deb
   OBJECT_DIR = CMakeFiles\BugLife.dir
   OBJECT_FILE_DIR = CMakeFiles\BugLife.dir
 
+build CMakeFiles/BugLife.dir/Teleporter.cpp.obj: CXX_COMPILER__BugLife_unscanned_Debug C$:/Users/wikto/CLionProjects/BugLife/Teleporter.cpp || cmake_object_order_depends_target_BugLife
+  DEP_FILE = CMakeFiles\BugLife.dir\Teleporter.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\BugLife.dir
+  OBJECT_FILE_DIR = CMakeFiles\BugLife.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target BugLife
@@ -81,7 +87,7 @@ build CMakeFiles/BugLife.dir/Hopper.cpp.obj: CXX_COMPILER__BugLife_unscanned_Deb
 #############################################
 # Link the executable BugLife.exe
 
-build BugLife.exe: CXX_EXECUTABLE_LINKER__BugLife_Debug CMakeFiles/BugLife.dir/main.cpp.obj CMakeFiles/BugLife.dir/Bug.cpp.obj CMakeFiles/BugLife.dir/Crawler.cpp.obj CMakeFiles/BugLife.dir/Hopper.cpp.obj
+build BugLife.exe: CXX_EXECUTABLE_LINKER__BugLife_Debug CMakeFiles/BugLife.dir/main.cpp.obj CMakeFiles/BugLife.dir/Bug.cpp.obj CMakeFiles/BugLife.dir/Crawler.cpp.obj CMakeFiles/BugLife.dir/Hopper.cpp.obj CMakeFiles/BugLife.dir/Teleporter.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\BugLife.dir
