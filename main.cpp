@@ -69,45 +69,63 @@ int main() {
     inFile.close();
 
 
-    displayBugs(bug_vector);
-    int bugID;
-    std::cout << "Enter bug ID: ";
-    std::cin >> bugID;
-    bool found = false;
+    int choice;
+    do {
+        std::cout << "\n--- Bug Management Menu ---\n";
+        std::cout << "1. Display All Bugs\n";
+        std::cout << "2. Display Bug by ID\n";
+        std::cout << "3. Tap the Bug Board\n";
+        std::cout << "4. Show Bug Paths\n";
+        std::cout << "5. Exit\n";
+        std::cout << "Enter your choice: ";
+        std::cin >> choice;
 
-    for (const Bug* bug : bug_vector) {
-        if (bug->getId() == bugID) {
-            std::cout << "Bug Found: " << bug->getId() << " " <<(dynamic_cast<const Crawler*>(bug) ? "Crawler" : "Hopper")
-                      << " (" << bug->getX() << "," << bug->getY() << ") " << bug->getSize()
-                      << " " << directionToString(bug->getDirection())
-                      << " " << (bug->isAlive() ? "Alive" : "Dead");
-            if (const auto* hopper = dynamic_cast<const Hopper*>(bug)) {
-                std::cout << " " << hopper->getHopLength();
+        switch (choice) {
+            case 1:
+                displayBugs(bug_vector);
+                break;
+            case 2:
+            {
+                int bugID;
+                std::cout << "Enter bug ID: ";
+                std::cin >> bugID;
+                bool found = false;
+
+                for (const Bug* bug : bug_vector) {
+                    if (bug->getId() == bugID) {
+                        std::cout << "Bug Found: " << bug->getId() << " " <<(dynamic_cast<const Crawler*>(bug) ? "Crawler" : "Hopper")
+                                  << " (" << bug->getX() << "," << bug->getY() << ") " << bug->getSize()
+                                  << " " << directionToString(bug->getDirection())
+                                  << " " << (bug->isAlive() ? "Alive" : "Dead");
+                        if (const auto* hopper = dynamic_cast<const Hopper*>(bug)) {
+                            std::cout << " " << hopper->getHopLength();
+                        }
+                        std::cout << std::endl;
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    std::cout << "Bug " << bugID << " not found.\n";
+                }
             }
-            std::cout << std::endl;
-            found = true;
-            break;
+                break;
+            case 3:
+                std::cout << "Tapping the Bug Board...\n";
+                for (Bug* bug : bug_vector) {
+                    bug->move();
+                }
+                break;
+            case 4:
+                displayLifeHistory(bug_vector);
+                break;
+            case 5:
+                std::cout << "Exiting the program.\n";
+                break;
+            default:
+                std::cout << "Invalid choice. Please try again.\n";
         }
-    }
-
-    if (!found) {
-        std::cout << "Bug " << bugID << " not found." << std::endl;
-    }
-    for (int i = 0; i < 2; ++i) {
-
-
-    std::cout << "Tapping the Bug Board..." << std::endl;
-    for (Bug* bug : bug_vector) {
-        bug->move();
-    }
-}
-//    for (int i = 0; i < 10; ++i) {
-//    for (const Bug* bug : bug_vector) {
-//        std::cout << "Bug ID: " << bug->getId() << " at Position: (" << bug->getX() << "," << bug->getY() << ")" << (bug->isAlive() ? "Alive" : "Dead") << std::endl;
-//    }
-//}
-    displayLifeHistory(bug_vector);
-
+    } while (choice != 5);
 
     // Don't forget to free memory for dynamically allocated objects
     for (auto bug : bug_vector) {
