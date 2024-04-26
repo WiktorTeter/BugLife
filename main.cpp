@@ -7,9 +7,14 @@
 #include "Crawler.h"
 #include "Hopper.h"
 #include "Teleporter.h"
+#include "SuperBug.h"
 #include <chrono>
 #include <thread>
+#include <SFML/Graphics.hpp>
+const int WINDOW_WIDTH = 800;
+const int WINDOW_HEIGHT = 800;
 const int BOARD_SIZE = 10;
+const int TILE_SIZE = WINDOW_WIDTH / BOARD_SIZE;
 void displayAllCells(const std::vector<std::vector<std::vector<Bug*>>>& board) {
     for (int x = 0; x < BOARD_SIZE; ++x) {
         for (int y = 0; y < BOARD_SIZE; ++y) {
@@ -19,7 +24,7 @@ void displayAllCells(const std::vector<std::vector<std::vector<Bug*>>>& board) {
             } else {
                 for (size_t i = 0; i < board[x][y].size(); ++i) {
                     Bug* bug = board[x][y][i];
-                    std::string type = "Unknown"; // Default if none of the dynamic casts succeed
+                    std::string type = "Unknown";
 
                     if (dynamic_cast<Crawler*>(bug)) {
                         type = "Crawler";
@@ -37,6 +42,15 @@ void displayAllCells(const std::vector<std::vector<std::vector<Bug*>>>& board) {
         }
     }
 }
+int countAliveBugs(const std::vector<Bug*>& bug_vector) {
+    int aliveCount = 0;
+    for (auto& bug : bug_vector) {
+        if (bug->isAlive()) {
+            aliveCount++;
+        }
+    }
+    return aliveCount;
+}
 
 void clearBoard(std::vector<std::vector<std::vector<Bug*>>>& board) {
     for (int x = 0; x < BOARD_SIZE; ++x) {
@@ -48,7 +62,7 @@ void clearBoard(std::vector<std::vector<std::vector<Bug*>>>& board) {
 void updateBoard(std::vector<std::vector<std::vector<Bug*>>>& board, const std::vector<Bug*>& bug_vector) {
     clearBoard(board);
     for (auto bug : bug_vector) {
-        if (bug->isAlive()) {  // Only add bugs that are alive
+        if (bug->isAlive()) {
             int x = bug->getX();
             int y = bug->getY();
             if (x >= 0 && x < BOARD_SIZE && y >= 0 && y < BOARD_SIZE) {
@@ -295,6 +309,7 @@ int main() {
         std::cout << "5. Exit and write bugs path to file\n";
         std::cout << "6. Display All Cells\n";
         std::cout << "7. Run Simulation\n";
+        std::cout << "8. Run SFML\n";
         std::cout << "Enter your choice: ";
         std::cin >> choice;
 
@@ -327,8 +342,115 @@ int main() {
             case 7:
                 runSimulation(bug_vector, board);
                 break;
-            default:
-                std::cout << "Invalid choice. Please try again.\n";
+            case 8: {
+                // Load textures
+                sf::Texture crawlerTexture, hopperTexture, teleporterTexture, SuperBugTexture;
+                if (!crawlerTexture.loadFromFile("C:\\Users\\wikto\\CLionProjects\\BugLife\\crawler.png") ||
+                    !hopperTexture.loadFromFile("C:\\Users\\wikto\\CLionProjects\\BugLife\\hopper.png") ||
+                    !teleporterTexture.loadFromFile("C:\\Users\\wikto\\CLionProjects\\BugLife\\teleporter.png") ||
+                    !SuperBugTexture.loadFromFile("C:\\Users\\wikto\\CLionProjects\\BugLife\\super.png")) {
+                    std::cerr << "Error loading textures\n";
+                    return -1;
+                }
+                SuperBug superBug(121, 2, 3, Direction::North, 10);
+                bug_vector.push_back(&superBug);
+                float scale = 32.0f / (float)teleporterTexture.getSize().x;
+                // Create sprites
+                sf::Sprite crawlerSprite(crawlerTexture);
+                sf::Sprite hopperSprite(hopperTexture);
+                sf::Sprite teleporterSprite(teleporterTexture);
+                sf::Sprite SuperBugSprite(SuperBugTexture);
+
+                // Set scale for sprites based on your tile size
+                crawlerSprite.setScale(scale, scale);
+                hopperSprite.setScale(scale, scale);
+                teleporterSprite.setScale(scale, scale);
+                SuperBugSprite.setScale(scale, scale);
+
+                // Create window
+                sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "BugLife Simulation");
+
+                while (window.isOpen()) {
+                    sf::Event event;
+                    while (window.pollEvent(event)) {
+                        if (event.type == sf::Event::Closed)
+                            window.close();
+                    }
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+                        superBug.setDirection(Direction::North); // You need to implement setDirection method.
+                        superBug.move();
+                    } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+                        superBug.setDirection(Direction::South); // You need to implement setDirection method.
+                        superBug.move();
+                    } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+                        superBug.setDirection(Direction::West); // You need to implement setDirection method.
+                        superBug.move();
+                    } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+                        superBug.setDirection(Direction::East); // You need to implement setDirection method.
+                        superBug.move();
+                    }
+                    // Update game state
+                    tapBoard(bug_vector, board); // This will move the bugs and update their states
+                    updateBoard(board, bug_vector); // Update the board with the new bug positions
+                    BugEating(board); // Process eating
+
+                    int aliveCount = countAliveBugs(bug_vector);
+                    if (aliveCount <= 1) {
+                        // If only one bug is alive or none, end the simulation
+                        if (aliveCount == 1) {
+                            // Find the last standing bug and print its information
+                            for (auto& bug : bug_vector) {
+                                if (bug->isAlive()) {
+                                    std::cout << "Last bug standing: Bug ID " << bug->getId() << "\n";
+                                    break;
+                                }
+                            }
+                        } else {
+                            std::cout << "No bugs are alive.\n";
+                        }
+                        window.close(); // Close the window to end the simulation
+                        break;
+                    }
+
+                    window.clear(); // Clear the window
+
+                    // Draw all bugs
+                    for (auto &column : board) {
+                        for (auto &cell : column) {
+                            for (auto *bug : cell) {
+                                if (bug->isAlive()) {
+                                    // Choose sprite based on bug type
+                                    sf::Sprite* spriteToUse = nullptr;
+                                    if (dynamic_cast<Crawler*>(bug)) {
+                                        spriteToUse = &crawlerSprite;
+                                    } else if (dynamic_cast<Hopper*>(bug)) {
+                                        spriteToUse = &hopperSprite;
+                                    } else if (dynamic_cast<Teleporter*>(bug)) {
+                                        spriteToUse = &teleporterSprite;
+                                    }
+
+                                    if (spriteToUse) {
+                                        spriteToUse->setPosition(static_cast<float>(bug->getX()) * TILE_SIZE,
+                                                                 static_cast<float>(bug->getY()) * TILE_SIZE);
+                                        window.draw(*spriteToUse);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (superBug.isAlive()) {
+                        SuperBugSprite.setPosition(static_cast<float>(superBug.getX()) * TILE_SIZE,
+                                                   static_cast<float>(superBug.getY()) * TILE_SIZE);
+                        window.draw(SuperBugSprite);
+                    }
+
+                    window.display(); // Display the window
+
+                    // Sleep to simulate time step
+                    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+                }
+            }
+                break;
         }
     } while (choice != 5);
 

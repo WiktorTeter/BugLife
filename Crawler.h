@@ -5,7 +5,6 @@
 #define CRAWLER_H
 
 #include "Bug.h"
-//crawler.h
 class Crawler : public Bug {
 public:
     using Bug::Bug;
