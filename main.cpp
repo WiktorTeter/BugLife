@@ -355,13 +355,11 @@ int main() {
                 SuperBug superBug(121, 2, 3, Direction::North, 10);
                 bug_vector.push_back(&superBug);
                 float scale = 32.0f / (float)teleporterTexture.getSize().x;
-                // Create sprites
                 sf::Sprite crawlerSprite(crawlerTexture);
                 sf::Sprite hopperSprite(hopperTexture);
                 sf::Sprite teleporterSprite(teleporterTexture);
                 sf::Sprite SuperBugSprite(SuperBugTexture);
 
-                // Set scale for sprites based on your tile size
                 crawlerSprite.setScale(scale, scale);
                 hopperSprite.setScale(scale, scale);
                 teleporterSprite.setScale(scale, scale);
@@ -377,28 +375,28 @@ int main() {
                             window.close();
                     }
                     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-                        superBug.setDirection(Direction::North); // You need to implement setDirection method.
+                        superBug.setDirection(Direction::North);
                         superBug.move();
                     } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-                        superBug.setDirection(Direction::South); // You need to implement setDirection method.
+                        superBug.setDirection(Direction::South); //
                         superBug.move();
                     } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-                        superBug.setDirection(Direction::West); // You need to implement setDirection method.
+                        superBug.setDirection(Direction::West); //
                         superBug.move();
                     } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-                        superBug.setDirection(Direction::East); // You need to implement setDirection method.
+                        superBug.setDirection(Direction::East); //
                         superBug.move();
                     }
-                    // Update game state
-                    tapBoard(bug_vector, board); // This will move the bugs and update their states
-                    updateBoard(board, bug_vector); // Update the board with the new bug positions
-                    BugEating(board); // Process eating
+
+                    tapBoard(bug_vector, board);
+                    updateBoard(board, bug_vector);
+                    BugEating(board);
 
                     int aliveCount = countAliveBugs(bug_vector);
                     if (aliveCount <= 1) {
-                        // If only one bug is alive or none, end the simulation
+
                         if (aliveCount == 1) {
-                            // Find the last standing bug and print its information
+
                             for (auto& bug : bug_vector) {
                                 if (bug->isAlive()) {
                                     std::cout << "Last bug standing: Bug ID " << bug->getId() << "\n";
@@ -408,18 +406,17 @@ int main() {
                         } else {
                             std::cout << "No bugs are alive.\n";
                         }
-                        window.close(); // Close the window to end the simulation
+                        window.close();
                         break;
                     }
 
-                    window.clear(); // Clear the window
+                    window.clear();
 
                     // Draw all bugs
                     for (auto &column : board) {
                         for (auto &cell : column) {
                             for (auto *bug : cell) {
                                 if (bug->isAlive()) {
-                                    // Choose sprite based on bug type
                                     sf::Sprite* spriteToUse = nullptr;
                                     if (dynamic_cast<Crawler*>(bug)) {
                                         spriteToUse = &crawlerSprite;
@@ -444,7 +441,7 @@ int main() {
                         window.draw(SuperBugSprite);
                     }
 
-                    window.display(); // Display the window
+                    window.display();
 
                     // Sleep to simulate time step
                     std::this_thread::sleep_for(std::chrono::milliseconds(1000));

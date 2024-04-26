@@ -4,7 +4,6 @@
 #include "SuperBug.h"
 
 void SuperBug::move() {
-    // Assume position is a std::pair<int, int> representing the x and y coordinates
     switch (direction) {
         case Direction::North:
             position.second -= 1;

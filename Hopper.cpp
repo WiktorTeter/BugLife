@@ -13,7 +13,6 @@ Hopper::Hopper(int id, int x, int y, Direction dir, int size, int hopLength)
 
 
 void Hopper::move() {
-    // Seed random generator - only once at the start of the program (or game)
     static bool seeded = false;
     if (!seeded) {
         std::srand(static_cast<unsigned int>(std::time(nullptr)));
